@@ -10,8 +10,8 @@ import {logger, stream} from "./logger";
 import {ErrorHandler} from "./common/error-handling/ErrorHandler";
 import {buildSchema} from "type-graphql";
 import {ApolloServer} from "apollo-server-express";
-import {UserResolver} from "./resolvers/UserResolver";
 import {GraphQLError} from "graphql";
+import path from "path";
 
 /**
  * App Entrance
@@ -59,7 +59,7 @@ class App {
         // Set and start Apollo server to enable GraphQL
         const schema = await buildSchema({
             container: Container,
-            resolvers: [UserResolver],
+            resolvers: [path.join(__dirname, '/resolvers/*.{ts,js}')],
         });
 
         const apolloServer = new ApolloServer({
