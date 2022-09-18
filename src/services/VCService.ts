@@ -1,7 +1,7 @@
 import {Service} from 'typedi';
 import {VCRepository} from "../repositories/VCRepository";
 import {VC} from "../models/entities/VC";
-import {CredentialSubject, VCDoc} from "../models/dtos/VC.dto";
+import {VCDoc} from "../models/dtos/VC.dto";
 import {ContextUtil} from "../util/ContextUtil";
 import {env} from "../common/env";
 
@@ -36,7 +36,7 @@ export class VCService {
         vcDoc.context = ContextUtil.defaultContextOfVC();
 
         // TODO Add REST API to resolve ID
-        vcDoc.id = `${env.app.endpoint}/credentials/${vc.id}`;
+        vcDoc.id = `${env.app.endpoint}/vc/${vc.id}`;
 
         // Set default VC type
         vcDoc.type = ["VerifiableCredential"];

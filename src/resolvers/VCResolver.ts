@@ -19,13 +19,6 @@ export class VCResolver {
     ) {
     }
 
-    @Query(() => [VC], {
-        description: 'Get vc list',
-    })
-    async getVCs(): Promise<VC[]> {
-        return this.vcService.findAll();
-    }
-
     @Query(() => VCDoc, {
         description: 'Get VC by id',
     })
