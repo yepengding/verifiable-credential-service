@@ -1,6 +1,7 @@
 # Verifiable Credential Service
 
-A lightweight service providing verifiable credential functionalities based on
+A lightweight service providing verifiable credential functionalities based
+on [swift-express-graphql](https://github.com/yepengding/swift-express-graphql).
 
 # Quickstart
 

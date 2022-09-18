@@ -23,13 +23,17 @@ export class VC {
 
     @Field()
     @Column()
-    credentialSubject: string
+    subject: string
+
+    @Field()
+    @Column()
+    claim: string
 
     /**
      * Issuance Date
      */
     @Field()
     @CreateDateColumn()
-    createdAt?: Date
+    createdAt: Date
 
 }

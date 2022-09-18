@@ -1,13 +1,12 @@
 import {IsNotEmpty, MaxLength} from "class-validator";
-import {Field, InputType} from "type-graphql";
+import {Field, InputType, ObjectType} from "type-graphql";
 
 /**
- * Verifiable Credential DTOs
+ * Create VC Request
  *
- * @author Yepeng Ding
  */
 @InputType()
-export class CreateVC {
+export class CreateVCReq {
 
     @Field()
     @IsNotEmpty()
@@ -16,7 +15,48 @@ export class CreateVC {
 
     @Field()
     @IsNotEmpty()
+    @MaxLength(255)
+    public subject: string;
+
+    @Field()
+    @IsNotEmpty()
     @MaxLength(2047)
-    public credentialSubject: string;
+    public claim: string;
 
 }
+
+@ObjectType()
+export class CredentialSubject {
+
+    @Field()
+    id: string
+
+    @Field()
+    claim: string
+}
+
+
+@ObjectType()
+export class VCDoc {
+
+    @Field(() => [String])
+    context: string[]
+
+    @Field()
+    id: string
+
+    @Field(() => [String])
+    type: string[]
+
+    @Field()
+    issuer: string
+
+    @Field()
+    issuanceDate: string
+
+    @Field(() => CredentialSubject)
+    credentialSubject: CredentialSubject
+
+}
+
+

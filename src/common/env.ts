@@ -1,4 +1,5 @@
 import dotenv from "dotenv";
+import * as process from "process";
 
 /**
  * Environment Configuration
@@ -14,8 +15,9 @@ export const env = {
     },
     debug: process.env.NODE_ENV === 'development',
     app: {
+        domain: process.env.APP_DOMAIN || 'http://localhost',
         port: process.env.APP_PORT ? parseInt(process.env.APP_PORT) : 8000,
-        controllers: process.env.APP_CONTROLLER_PATH || ''
+        endpoint: `${process.env.APP_DOMAIN || 'http://localhost'}:${process.env.APP_PORT || 8000}`
     },
     log: {
         dir: process.env.LOG_DIR || 'log',
@@ -32,6 +34,6 @@ export const env = {
         logging: process.env.DB_LOGGING === "true",
         logger: process.env.DB_LOGGER ? process.env.DB_LOGGER : "advanced-console",
         entities: [process.env.DB_ENTITY_PATH || "dist/models/*.js"]
-    }
+    },
 }
 

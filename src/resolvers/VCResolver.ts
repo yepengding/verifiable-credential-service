@@ -3,7 +3,7 @@ import {Arg, Mutation, Query, Resolver} from 'type-graphql';
 import {VCService} from "../services/VCService";
 import {VC} from "../models/entities/VC";
 import {Assert} from "../common/assertion/Assert";
-import {CreateVC} from "../models/dtos/VC.dto";
+import {CreateVCReq, VCDoc} from "../models/dtos/VC.dto";
 
 /**
  * User Resolver
@@ -19,30 +19,20 @@ export class VCResolver {
     ) {
     }
 
-    @Query(() => [VC], {
-        description: 'Get vc list',
-    })
-    async getVCs(): Promise<VC[]> {
-        return this.vcService.findAll();
-    }
-
-    @Query(() => VC, {
+    @Query(() => VCDoc, {
         description: 'Get VC by id',
     })
-    async getUser(@Arg('id') id: number): Promise<VC | null> {
+    async getVC(@Arg('id') id: number): Promise<VCDoc> {
         const vc = await this.vcService.retrieve(id);
         Assert.notNull(vc, `VC (${id}) does not exist.`);
-        return vc;
+        return this.vcService.resolveVCtoDoc(<VC>vc);
     }
 
     @Mutation(() => VC, {
-        description: 'Create vc',
+        description: 'Create VC',
     })
-    async createVC(@Arg('vc') vc: CreateVC): Promise<VC> {
-        const _vc = new VC();
-        _vc.issuer = vc.issuer;
-        _vc.credentialSubject = vc.credentialSubject;
-        return this.vcService.create(_vc);
+    async createVC(@Arg('vc') vc: CreateVCReq): Promise<VC> {
+        return this.vcService.create(vc as VC);
     }
 
 }

@@ -1,6 +1,6 @@
 {
   "name": "verifiable-crendential-service",
-  "version": "0.0.1",
+  "version": "0.0.3",
   "description": "A lightweight service providing verifiable credential functionalities.",
   "main": "src/app.ts",
   "scripts": {
@@ -38,6 +38,8 @@
     "mysql": "^2.18.1",
     "reflect-metadata": "^0.1.13",
     "routing-controllers": "^0.9.0",
+    "routing-controllers-openapi": "^3.1.0",
+    "swagger-ui-express": "^4.5.0",
     "type-graphql": "^1.1.1",
     "typedi": "^0.10.0",
     "typeorm": "^0.3.6",
