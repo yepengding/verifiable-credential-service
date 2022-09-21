@@ -16,8 +16,8 @@ export const env = {
     debug: process.env.NODE_ENV === 'development',
     app: {
         domain: process.env.APP_DOMAIN || 'http://localhost',
-        port: process.env.APP_PORT ? parseInt(process.env.APP_PORT) : 8000,
-        endpoint: `${process.env.APP_DOMAIN || 'http://localhost'}:${process.env.APP_PORT || 8000}`
+        port: process.env.APP_PORT ? parseInt(process.env.APP_PORT) : 8001,
+        endpoint: `${process.env.APP_DOMAIN || 'http://localhost'}:${process.env.APP_PORT || 8001}`
     },
     log: {
         dir: process.env.LOG_DIR || 'log',
@@ -35,5 +35,8 @@ export const env = {
         logger: process.env.DB_LOGGER ? process.env.DB_LOGGER : "advanced-console",
         entities: [process.env.DB_ENTITY_PATH || "dist/models/*.js"]
     },
+    vdr: {
+        endpoint: process.env.VDR_ENDPOINT || "http://localhost:8000"
+    }
 }
 

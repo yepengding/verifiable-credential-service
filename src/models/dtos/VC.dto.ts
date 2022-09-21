@@ -23,8 +23,21 @@ export class CreateVCReq {
     @MaxLength(2047)
     public claim: string;
 
+    @Field({description: "Signing key ID."})
+    @IsNotEmpty()
+    @MaxLength(255)
+    public kid: string;
+
+    @Field({description: "Private signing key (JWK)."})
+    @IsNotEmpty()
+    @MaxLength(255)
+    public key: string;
+
 }
 
+/**
+ * VC Credential Subject
+ */
 @ObjectType()
 export class CredentialSubject {
 
@@ -33,6 +46,28 @@ export class CredentialSubject {
 
     @Field()
     claim: string
+}
+
+/**
+ * VC Proof
+ */
+@ObjectType()
+export class Proof {
+
+    @Field()
+    type: string
+
+    @Field()
+    created?: string
+
+    @Field()
+    verificationMethod: string
+
+    @Field()
+    proofPurpose: string
+
+    @Field()
+    proofValue?: string
 }
 
 
@@ -56,6 +91,9 @@ export class VCDoc {
 
     @Field(() => CredentialSubject)
     credentialSubject: CredentialSubject
+
+    @Field(() => Proof)
+    proof: Proof
 
 }
 

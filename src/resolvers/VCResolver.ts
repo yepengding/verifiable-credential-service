@@ -4,6 +4,8 @@ import {VCService} from "../services/VCService";
 import {VC} from "../models/entities/VC";
 import {Assert} from "../common/assertion/Assert";
 import {CreateVCReq, VCDoc} from "../models/dtos/VC.dto";
+import * as jose from 'jose';
+import {JWK} from 'jose';
 
 /**
  * User Resolver
@@ -31,8 +33,37 @@ export class VCResolver {
     @Mutation(() => VC, {
         description: 'Create VC',
     })
-    async createVC(@Arg('vc') vc: CreateVCReq): Promise<VC> {
-        return this.vcService.create(vc as VC);
+    async createVC(@Arg('vc') vcReq: CreateVCReq): Promise<VC> {
+        let vc = new VC();
+        vc.issuer = vcReq.issuer;
+        vc.subject = vcReq.subject;
+        vc.claim = vcReq.claim;
+        vc.kid = vcReq.kid;
+
+        // Create VC in DB
+        vc = await this.vcService.create(vc);
+
+        // Resolve VC to VC document
+        const vcDoc = this.vcService.resolveVCtoDoc(vc, false);
+        console.log(vcDoc);
+
+        // EdDSA (Ed25519) at default
+        const algorithm = 'EdDSA';
+        const signingKey = await jose.importJWK(JSON.parse(vcReq.key) as JWK, algorithm);
+
+        // Sign VC
+        vc.proofValue = await new jose.CompactSign(
+            new TextEncoder().encode(JSON.stringify(vcDoc)),
+        )
+            .setProtectedHeader({alg: algorithm})
+            .sign(signingKey);
+
+        vc.proofCreatedAt = new Date();
+
+        // Update VC with proof
+        vc = await this.vcService.update(vc);
+
+        return vc;
     }
 
 }
