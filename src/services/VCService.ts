@@ -25,17 +25,21 @@ export class VCService {
         return await VCRepository.save(vc);
     }
 
+    public async update(vc: VC): Promise<VC> {
+        return await VCRepository.save(vc);
+    }
+
     /**
      * Resolve VC to VC Document
      *
      * @param vc
+     * @param withProof with proof
      */
-    public resolveVCtoDoc(vc: VC): VCDoc {
+    public resolveVCtoDoc(vc: VC, withProof = true): VCDoc {
         const vcDoc = new VCDoc();
         // Set default VC contexts
         vcDoc.context = ContextUtil.defaultContextOfVC();
 
-        // TODO Add REST API to resolve ID
         vcDoc.id = `${env.app.endpoint}/vc/${vc.id}`;
 
         // Set default VC type
@@ -49,6 +53,16 @@ export class VCService {
             id: vc.subject,
             claim: vc.claim
         };
+
+        if (withProof) {
+            vcDoc.proof = {
+                type: "Ed25519Signature2020",
+                created: vc.proofCreatedAt?.toISOString(),
+                verificationMethod: `${env.vdr.endpoint}/did/${vc.issuer}#${vc.kid}`,
+                proofPurpose: "assertionMethod",
+                proofValue: vc.proofValue
+            };
+        }
 
         return vcDoc;
     }

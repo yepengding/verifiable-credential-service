@@ -21,13 +21,34 @@ export class VC {
     @Column()
     issuer: string
 
+    /**
+     * Credential Subject DID
+     */
     @Field()
     @Column()
     subject: string
 
+    /**
+     * Credential Subject Claim
+     */
     @Field()
     @Column()
     claim: string
+
+    /**
+     * Key ID of the public key for signature (Verification Method)
+     */
+    @Field()
+    @Column()
+    kid: string
+
+    @Field()
+    @Column("longtext", {nullable: true})
+    proofValue?: string
+
+    @Field()
+    @Column({nullable: true})
+    proofCreatedAt?: Date
 
     /**
      * Issuance Date
