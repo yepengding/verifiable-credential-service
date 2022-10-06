@@ -45,7 +45,7 @@ export class VerifyVCReq {
     @MaxLength(255)
     public publicKey: string;
 
-    @Field({description: "Verifiable credential document."})
+    @Field({description: "Verifiable credential."})
     @IsNotEmpty()
     @MaxLength(16383)
     public vc: string;
