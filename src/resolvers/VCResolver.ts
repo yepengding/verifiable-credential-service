@@ -6,9 +6,10 @@ import {Assert} from "../common/assertion/Assert";
 import {CreateVCReq, VCDoc, VerifyVCReq} from "../models/dtos/VC.dto";
 import * as jose from 'jose';
 import {JWK} from 'jose';
+import _ from "lodash";
 
 /**
- * User Resolver
+ * VC Resolver
  *
  * @author Yepeng Ding
  */
@@ -45,7 +46,7 @@ export class VCResolver {
      * @param vcReq
      */
     @Mutation(() => VCDoc, {
-        description: 'Create VC',
+        description: 'Create VC.',
     })
     async createVC(@Arg('vc') vcReq: CreateVCReq): Promise<VCDoc> {
         let vc = new VC();
@@ -80,7 +81,7 @@ export class VCResolver {
     }
 
     @Query(() => Boolean, {
-        description: 'Verify VC by id',
+        description: 'Verify VC.',
     })
     async verifyVC(@Arg('vc') vcReq: VerifyVCReq): Promise<boolean> {
         const vcDoc = JSON.parse(vcReq.vc) as VCDoc;
@@ -98,11 +99,14 @@ export class VCResolver {
         // Parse proof value
         const {payload} = await jose.compactVerify(proofValue, publicKey);
 
-        // Get credential
+        // Get credential string
         const payloadStr = new TextDecoder().decode(payload);
 
+        // Build credential object
+        const credential = JSON.parse(payloadStr) as VCDoc;
+
         // Judge if credentials are equal
-        return JSON.stringify(vcDoc) === payloadStr;
+        return _.isEqual(credential, vcDoc);
     }
 
 }
