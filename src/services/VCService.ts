@@ -1,5 +1,5 @@
 import {Service} from 'typedi';
-import {VCRepository} from "../repositories/VCRepository";
+import {getVCRepository} from "../repositories/VCRepository";
 import {VC} from "../models/entities/VC";
 import {VCDoc} from "../models/dtos/VC.dto";
 import {ContextUtil} from "../util/ContextUtil";
@@ -14,19 +14,19 @@ import {env} from "../common/env";
 export class VCService {
 
     public async findAll(): Promise<VC[]> {
-        return await VCRepository.find();
+        return (await getVCRepository()).find();
     }
 
     public async retrieve(id: number): Promise<VC | null> {
-        return await VCRepository.findOneBy({id});
+        return (await getVCRepository()).findOneBy({id});
     }
 
     public async create(vc: VC): Promise<VC> {
-        return await VCRepository.save(vc);
+        return (await getVCRepository()).save(vc);
     }
 
     public async update(vc: VC): Promise<VC> {
-        return await VCRepository.save(vc);
+        return (await getVCRepository()).save(vc);
     }
 
     /**

@@ -17,11 +17,11 @@ import path from "path";
 import {validationMetadatasToSchemas} from "class-validator-jsonschema";
 
 /**
- * App Entrance
+ * Application
  *
  * @author Yepeng Ding
  */
-class App {
+export class App {
     private readonly app: Application
 
     constructor() {
@@ -29,7 +29,7 @@ class App {
         this.app = createExpressServer({
             cors: true,
             classTransformer: true,
-            controllers: [path.join(__dirname + '/controllers/*.js')],
+            controllers: [path.join(__dirname + '/controllers/*.{ts,js}')],
             middlewares: [ErrorHandler],
             defaultErrorHandler: false
         });
@@ -41,16 +41,18 @@ class App {
      * Run application
      */
     public run() {
-        this.app.listen(env.app.port, () => {
-            logger.info(`🚀 App is running on port ${env.app.port}`);
-        });
+        // Run Apollo server
+        void this.runApolloServer();
+
+        // Run HTTP server
+        return this.runHttpServer();
     }
 
     /**
      * Initialize core settings
      * @private
      */
-    private async initializeCore() {
+    private initializeCore() {
         // Initialize logging
         this.app.use(morgan(env.log.format, {stream}));
 
@@ -60,7 +62,31 @@ class App {
             fallback: true,
             fallbackOnErrors: true
         });
+    }
 
+    /**
+     * Initialize Swagger UI
+     * @private
+     */
+    private initializeSwagger() {
+        const storage = getMetadataArgsStorage()
+        const schemas = validationMetadatasToSchemas({
+            refPointerPrefix: '#/components/schemas/',
+        })
+
+        const spec = routingControllersToSpec(storage, {}, {
+            components: {schemas},
+            info: {title: 'Verifiable Credential Service API', version: '0.0.6'},
+        })
+        this.app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(spec));
+    }
+
+    /**
+     * Run Apollo server.
+     *
+     * @private
+     */
+    private async runApolloServer() {
         // Set and start Apollo server to enable GraphQL
         const schema = await buildSchema({
             container: Container,
@@ -86,24 +112,18 @@ class App {
         logger.info(`🚀 Apollo is running at path ${apolloServer.graphqlPath}`);
     }
 
-    /**
-     * Initialize Swagger UI
-     * @private
-     */
-    private initializeSwagger() {
-        const storage = getMetadataArgsStorage()
-        const schemas = validationMetadatasToSchemas({
-            refPointerPrefix: '#/components/schemas/',
-        })
 
-        const spec = routingControllersToSpec(storage, {}, {
-            components: {schemas},
-            info: {title: 'Verifiable Credential Service API', version: '0.0.5'},
-        })
-        this.app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(spec));
+    /**
+     * Run HTTP server.
+     *
+     * @private
+     * @return HTTP server
+     */
+    private runHttpServer() {
+        return this.app.listen(env.app.port, () => {
+            logger.info(`🚀 App is running on port ${env.app.port}`);
+        });
     }
 
 }
 
-const app = new App();
-app.run();
