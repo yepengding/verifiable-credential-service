@@ -60,8 +60,6 @@ export class VCResolver {
         // Resolve VC to VC document
         const vcDoc = this.vcService.resolveVCtoDoc(vc, false);
 
-        console.log(vcDoc);
-
         // EdDSA (Ed25519) at default
         const algorithm = 'EdDSA';
         const privateKey = await jose.importJWK(JSON.parse(vcReq.privateKey) as JWK, algorithm);

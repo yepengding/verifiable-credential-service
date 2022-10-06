@@ -3,6 +3,12 @@
 A lightweight service providing verifiable credential functionalities based
 on [swift-express-graphql](https://github.com/yepengding/swift-express-graphql).
 
+## Cryptographic Algorithm
+
+| Functionality | Algorithm | Curve   |
+|---------------|-----------|---------|
+| VC Proof      | EdDSA     | Ed25519 |
+
 # Quickstart
 
 1. Install dependencies
@@ -49,5 +55,6 @@ domain/graphql
 
 - [Verifiable Credentials Data Model v1.1](https://www.w3.org/TR/vc-data-model/)
 - [Decentralized Identifiers (DIDs) v1.0](https://www.w3.org/TR/did-core/)
+- [Javascript Object Signing and Encryption](https://www.researchgate.net/publication/362015906_Javascript_Object_Signing_and_Encryption_JOSE_Standards_Considerations_and_Applications)
 - [swift-express-graphql](https://github.com/yepengding/swift-express-graphql)
-
+- [jose](https://github.com/panva/jose)

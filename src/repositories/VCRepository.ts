@@ -1,4 +1,4 @@
-import AppDataSource from "../db";
+import {getAppDataSource} from "../db";
 import {VC} from '../models/entities/VC';
 
 /**
@@ -6,4 +6,7 @@ import {VC} from '../models/entities/VC';
  *
  * @author Yepeng Ding
  */
-export const VCRepository = AppDataSource.getRepository(VC).extend({});
+export const getVCRepository = async () => {
+    const dataSource = await getAppDataSource();
+    return dataSource.getRepository(VC).extend({});
+}

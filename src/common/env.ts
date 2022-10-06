@@ -33,7 +33,6 @@ export const env = {
         synchronize: process.env.DB_SYNCHRONIZE === "true",
         logging: process.env.DB_LOGGING === "true",
         logger: process.env.DB_LOGGER ? process.env.DB_LOGGER : "advanced-console",
-        entities: [process.env.DB_ENTITY_PATH || "dist/models/*.js"]
     },
     vdr: {
         endpoint: process.env.VDR_ENDPOINT || "http://localhost:8000"

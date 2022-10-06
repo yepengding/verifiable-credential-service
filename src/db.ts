@@ -15,16 +15,26 @@ const AppDataSource = new DataSource({
     username: env.db.username,
     password: env.db.password,
     database: env.db.database,
-    entities: [path.join(__dirname + '/models/entities/*.js')],
+    entities: [path.join(__dirname + '/models/entities/*.{ts,js}')],
     synchronize: env.db.synchronize,
     logging: env.db.logging,
     logger: env.db.logger as "advanced-console" | "simple-console" | "file" | "debug"
 })
 
-AppDataSource.initialize()
-    .then(() => {
-        logger.debug("Initialized database.")
-    })
-    .catch((error) => console.log(error))
+/**
+ * Get App Data Source
+ *
+ * @return Promise<DataSource>
+ */
+export async function getAppDataSource(): Promise<DataSource> {
+    if (AppDataSource.isInitialized) {
+        return Promise.resolve(AppDataSource);
+    } else {
+        return AppDataSource.initialize()
+            .then((ds) => {
+                logger.debug("Initialized database.")
+                return ds;
+            });
+    }
+}
 
-export default AppDataSource;
