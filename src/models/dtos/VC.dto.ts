@@ -1,23 +1,29 @@
+/**
+ * Verifiable Credential DTOs.
+ *
+ * @author Yepeng Ding
+ */
+
 import {IsNotEmpty, MaxLength} from "class-validator";
 import {Field, InputType, ObjectType} from "type-graphql";
 
 /**
  * Create VC Request
  */
-@InputType()
+@InputType({description: "Create VC request."})
 export class CreateVCReq {
 
-    @Field()
+    @Field({description: "Issuer DID."})
     @IsNotEmpty()
     @MaxLength(255)
     public issuer: string;
 
-    @Field()
+    @Field({description: "Subject DID."})
     @IsNotEmpty()
     @MaxLength(255)
     public subject: string;
 
-    @Field()
+    @Field({description: "Claim associated with the subject."})
     @IsNotEmpty()
     @MaxLength(2047)
     public claim: string;
@@ -37,7 +43,7 @@ export class CreateVCReq {
 /**
  * Verify VC Request
  */
-@InputType()
+@InputType({description: "Verify VC request."})
 export class VerifyVCReq {
 
     @Field({description: "Public signing key (JWK)."})
@@ -45,7 +51,7 @@ export class VerifyVCReq {
     @MaxLength(255)
     public publicKey: string;
 
-    @Field({description: "Verifiable credential."})
+    @Field({description: "Verifiable credential (document)."})
     @IsNotEmpty()
     @MaxLength(16383)
     public vc: string;
@@ -55,63 +61,61 @@ export class VerifyVCReq {
 /**
  * VC Credential Subject
  */
-@ObjectType()
+@ObjectType({description: "Credential subject."})
 export class CredentialSubject {
 
-    @Field()
+    @Field({description: "Subject DID."})
     id: string
 
-    @Field()
+    @Field({description: "Claim associated with the subject."})
     claim: string
 }
 
 /**
  * VC Proof
  */
-@ObjectType()
+@ObjectType({description: "VC proof."})
 export class Proof {
 
-    @Field()
+    @Field({description: "Proof type"})
     type: string
 
-    @Field()
+    @Field({description: "Created time."})
     created?: string
 
-    @Field()
+    @Field({description: "Verification method."})
     verificationMethod: string
 
-    @Field()
+    @Field({description: "Proof purpose."})
     proofPurpose: string
 
-    @Field()
+    @Field({description: "Proof value."})
     proofValue?: string
 }
 
 
-@ObjectType()
+@ObjectType({description: "VC document."})
 export class VCDoc {
 
-    @Field(() => [String])
+    @Field(() => [String], {description: "VC contexts."})
     context: string[]
 
-    @Field()
+    @Field({description: "VC identifier."})
     id: string
 
-    @Field(() => [String])
+    @Field(() => [String], {description: "VC type."})
     type: string[]
 
-    @Field()
+    @Field({description: "Issuer DID."})
     issuer: string
 
-    @Field()
+    @Field({description: "Issuance date."})
     issuanceDate: string
 
-    @Field(() => CredentialSubject)
+    @Field(() => CredentialSubject, {description: "Credential subject."})
     credentialSubject: CredentialSubject
 
-    @Field(() => Proof)
+    @Field(() => Proof, {description: "VC proof."})
     proof?: Proof
 
 }
-
-

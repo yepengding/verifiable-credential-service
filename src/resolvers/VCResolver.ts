@@ -9,7 +9,7 @@ import {JWK} from 'jose';
 import _ from "lodash";
 
 /**
- * User Resolver
+ * VC Resolver
  *
  * @author Yepeng Ding
  */
