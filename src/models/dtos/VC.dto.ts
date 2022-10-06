@@ -3,7 +3,6 @@ import {Field, InputType, ObjectType} from "type-graphql";
 
 /**
  * Create VC Request
- *
  */
 @InputType()
 export class CreateVCReq {
@@ -31,7 +30,25 @@ export class CreateVCReq {
     @Field({description: "Private signing key (JWK)."})
     @IsNotEmpty()
     @MaxLength(255)
-    public key: string;
+    public privateKey: string;
+
+}
+
+/**
+ * Verify VC Request
+ */
+@InputType()
+export class VerifyVCReq {
+
+    @Field({description: "Public signing key (JWK)."})
+    @IsNotEmpty()
+    @MaxLength(255)
+    public publicKey: string;
+
+    @Field({description: "Verifiable credential document."})
+    @IsNotEmpty()
+    @MaxLength(16383)
+    public vc: string;
 
 }
 
@@ -93,7 +110,7 @@ export class VCDoc {
     credentialSubject: CredentialSubject
 
     @Field(() => Proof)
-    proof: Proof
+    proof?: Proof
 
 }
 
