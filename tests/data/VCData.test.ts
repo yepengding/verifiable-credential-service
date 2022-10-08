@@ -24,7 +24,7 @@ export const TestVC1String =
     }`;
 
 export const TestVC2String =
-    `
+    `{
       "context": [
         "https://www.w3.org/2018/credentials/v1",
         "https://www.w3.org/2018/credentials/examples/v1"

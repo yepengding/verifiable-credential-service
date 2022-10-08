@@ -20,7 +20,7 @@ describe('VC GraphQL tests', () => {
         process.exit(0);
     })
 
-    it('should create VC offline', async () => {
+    it('should create VC offline.', async () => {
         const issuer = "did:issuer:0002";
         const subject = "did:holder:0001";
         const claim = JSON.stringify({
@@ -72,7 +72,7 @@ describe('VC GraphQL tests', () => {
             .then(res => console.log(res.body));
     });
 
-    it('should verify VC', async () => {
+    it('should verify VC offline.', async () => {
         const vc = TestVC1String;
         const publicKey = AssertionKey.public;
 

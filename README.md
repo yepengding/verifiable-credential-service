@@ -5,9 +5,19 @@ on [swift-express-graphql](https://github.com/yepengding/swift-express-graphql).
 
 ## Cryptographic Algorithm
 
-| Functionality | Algorithm | Curve   |
-|---------------|-----------|---------|
-| VC Proof      | EdDSA     | Ed25519 |
+| Functionality       | Algorithm | Curve   |
+|---------------------|-----------|---------|
+| VC/VP Hashing       | SHA256    |         |
+| VC/VP Proof Signing | EdDSA     | Ed25519 |
+
+Proof value = Sign(Hash(Doc \ Proof))
+
+## Feature
+
+- [x] Issue VCs/VPs.
+- [x] VC storage.
+- [x] Verify VCs/VPs offline.
+- [ ] Verify VCs/VPs based online (with VDR and VC persistence).
 
 # Quickstart
 

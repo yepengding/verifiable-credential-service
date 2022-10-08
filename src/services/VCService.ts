@@ -60,14 +60,14 @@ export class VCService {
      * @return true if proof is correct.
      */
     public async verifyVCDoc(vcDoc: VCDoc, publicKey: string): Promise<boolean> {
-        // Get public singing key
+        // Get public assertion key
         const algorithm = 'EdDSA';
         const pk = await jose.importJWK(JSON.parse(publicKey) as JWK, algorithm);
 
         // Get proof value
         const proofValue = vcDoc.proof?.proofValue as string;
 
-        // Delete proof
+        // Delete vpService
         delete vcDoc.proof;
 
         // Parse proof value
