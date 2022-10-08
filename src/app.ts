@@ -1,5 +1,6 @@
 import 'reflect-metadata';
 
+import path from "path";
 import {createExpressServer, getMetadataArgsStorage, useContainer as routingUseContainer} from 'routing-controllers';
 import {Application} from "express";
 import {useContainer as classValidatorUseContainer} from 'class-validator';
@@ -11,9 +12,8 @@ import {ErrorHandler} from "./common/error-handling/ErrorHandler";
 import {buildSchema} from "type-graphql";
 import {ApolloServer} from "apollo-server-express";
 import {GraphQLError} from "graphql";
-import {routingControllersToSpec} from "routing-controllers-openapi";
 import * as swaggerUi from 'swagger-ui-express';
-import path from "path";
+import {routingControllersToSpec} from "routing-controllers-openapi";
 import {validationMetadatasToSchemas} from "class-validator-jsonschema";
 
 /**
@@ -76,7 +76,7 @@ export class App {
 
         const spec = routingControllersToSpec(storage, {}, {
             components: {schemas},
-            info: {title: 'Verifiable Credential Service API', version: '0.0.7'},
+            info: {title: 'Verifiable Credential Service API', version: '0.0.8'},
         })
         this.app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(spec));
     }
