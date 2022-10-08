@@ -28,7 +28,7 @@ export class VCController {
     async getOneById(@Param('id') id: number) {
         const vc = await this.vcService.retrieve(id);
         Assert.notNull(vc, `VC (id: ${id}) does not exist.`);
-        return this.vcService.resolveVCtoDoc(<VC>vc);
+        return this.vcService.resolveVCToDoc(<VC>vc);
     }
 
     /**

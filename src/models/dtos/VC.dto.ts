@@ -6,6 +6,7 @@
 
 import {IsNotEmpty, MaxLength} from "class-validator";
 import {Field, InputType, ObjectType} from "type-graphql";
+import {Proof} from "./Common.dto";
 
 /**
  * Create VC Request
@@ -28,12 +29,12 @@ export class CreateVCReq {
     @MaxLength(2047)
     public claim: string;
 
-    @Field({description: "Signing key ID."})
+    @Field({description: "Assertion key ID."})
     @IsNotEmpty()
     @MaxLength(255)
     public kid: string;
 
-    @Field({description: "Private signing key (JWK)."})
+    @Field({description: "Private assertion key (JWK string)."})
     @IsNotEmpty()
     @MaxLength(255)
     public privateKey: string;
@@ -41,20 +42,20 @@ export class CreateVCReq {
 }
 
 /**
- * Verify VC Request
+ * Verify VC Document String Request
  */
 @InputType({description: "Verify VC request."})
-export class VerifyVCReq {
+export class VerifyVCDocStringReq {
 
-    @Field({description: "Public signing key (JWK)."})
+    @Field({description: "Public assertion key (JWK string)."})
     @IsNotEmpty()
     @MaxLength(255)
     public publicKey: string;
 
-    @Field({description: "Verifiable credential (document)."})
+    @Field({description: "Verifiable credential document string."})
     @IsNotEmpty()
     @MaxLength(16383)
-    public vc: string;
+    public vcDocString: string;
 
 }
 
@@ -70,29 +71,6 @@ export class CredentialSubject {
     @Field({description: "Claim associated with the subject."})
     claim: string
 }
-
-/**
- * VC Proof
- */
-@ObjectType({description: "VC proof."})
-export class Proof {
-
-    @Field({description: "Proof type"})
-    type: string
-
-    @Field({description: "Created time."})
-    created?: string
-
-    @Field({description: "Verification method."})
-    verificationMethod: string
-
-    @Field({description: "Proof purpose."})
-    proofPurpose: string
-
-    @Field({description: "Proof value."})
-    proofValue?: string
-}
-
 
 @ObjectType({description: "VC document."})
 export class VCDoc {
