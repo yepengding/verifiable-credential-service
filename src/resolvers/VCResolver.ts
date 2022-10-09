@@ -3,7 +3,10 @@ import {Arg, Mutation, Query, Resolver} from 'type-graphql';
 import {VCService} from "../services/VCService";
 import {VC} from "../models/entities/VC";
 import {Assert} from "../common/assertion/Assert";
-import {CreateVCReq, VCDoc, VerifyVCDocStringReq} from "../models/dtos/VC.dto";
+import {CreateVCReq, VCDoc, VerifyVCDocStrOffReq, VerifyVCDocStrOnReq} from "../models/dtos/VC.dto";
+import {getReq} from "../util/HttpRequestUtil";
+import {PublicKey} from "../models/models/PublicKey";
+import {HttpErrorCode} from "../common/error-handling/ErroCode";
 
 /**
  * VC Resolver
@@ -57,7 +60,26 @@ export class VCResolver {
     }
 
     /**
-     * Verify VC Document String Request
+     * Verify VC Document String Online Request
+     *
+     * @param verifyVCReq
+     */
+    @Query(() => Boolean, {
+        description: 'Verify VC document string online.',
+    })
+    async verifyVCDocStringOnline(@Arg('verifyVCReq') verifyVCReq: VerifyVCDocStrOnReq): Promise<boolean> {
+        const vcDoc = this.vcService.resolveDocStringToDoc(verifyVCReq.vcDocString);
+
+        const vm = vcDoc.proof?.verificationMethod;
+        Assert.notNull(vm, HttpErrorCode.BAD_REQUEST, "Verification method should not be empty.");
+
+        const publicKey = await getReq<PublicKey>(vm as string);
+
+        return await this.vcService.verifyVCDoc(vcDoc, publicKey.jwk);
+    }
+
+    /**
+     * Verify VC Document String Offline Request
      * without checking VDR and persistence.
      *
      * @param verifyVCReq
@@ -65,7 +87,7 @@ export class VCResolver {
     @Query(() => Boolean, {
         description: 'Verify VC document string offline (without checking VDR and persistence).',
     })
-    async verifyVCDocStringOffline(@Arg('verifyVCReq') verifyVCReq: VerifyVCDocStringReq): Promise<boolean> {
+    async verifyVCDocStringOffline(@Arg('verifyVCReq') verifyVCReq: VerifyVCDocStrOffReq): Promise<boolean> {
         const vcDoc = this.vcService.resolveDocStringToDoc(verifyVCReq.vcDocString);
 
         return await this.vcService.verifyVCDoc(vcDoc, verifyVCReq.publicKey);
@@ -76,7 +98,7 @@ export class VCResolver {
     })
     async resolveVCToDoc(@Arg('id', {description: "Verifiable credential identifier"}) id: number): Promise<VCDoc> {
         const vc = await this.vcService.retrieve(id);
-        Assert.notNull(vc, `VC (${id}) does not exist.`);
+        Assert.notNull(vc, HttpErrorCode.NOT_FOUND, `VC (${id}) does not exist.`);
         return this.vcService.resolveVCToDoc(<VC>vc);
     }
 
@@ -85,7 +107,7 @@ export class VCResolver {
     })
     async resolveVCToDocString(@Arg('id', {description: "Verifiable credential identifier"}) id: number): Promise<string> {
         const vc = await this.vcService.retrieve(id);
-        Assert.notNull(vc, `VC (${id}) does not exist.`);
+        Assert.notNull(vc, HttpErrorCode.NOT_FOUND, `VC (${id}) does not exist.`);
         return JSON.stringify(this.vcService.resolveVCToDoc(<VC>vc));
     }
 

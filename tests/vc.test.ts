@@ -1,3 +1,8 @@
+/**
+ * VC-Related Test Cases
+ *
+ * @author Yepeng Ding
+ */
 import http from "http";
 import request from "supertest";
 import process from "process";
@@ -73,13 +78,36 @@ describe('VC GraphQL tests', () => {
             .then(res => console.log(res.body));
     });
 
+    it('should verify VC online.', async () => {
+        const vc = TestVC1String;
+
+        const queryData = {
+            query: `
+            query Query($verifyVcReq: VerifyVCDocStrOnReq!) {
+              verifyVCDocStringOnline(verifyVCReq: $verifyVcReq)
+            }`,
+            variables: `{
+                          "verifyVcReq": {
+                            "vcDocString": ${JSON.stringify(vc)}
+                          }
+                        }`,
+        }
+
+        await request(`${serverAddress}/graphql`)
+            .post("/")
+            .send(queryData)
+            // .expect('Content-Type', /json/)
+            // .expect(200)
+            .then(res => console.log(res.body));
+    });
+
     it('should verify VC offline.', async () => {
         const vc = TestVC1String;
         const publicKey = AssertionKey.public;
 
         const queryData = {
             query: `
-            query Query($verifyVcReq: VerifyVCDocStringReq!) {
+            query Query($verifyVcReq: VerifyVCDocStrOffReq!) {
               verifyVCDocStringOffline(verifyVCReq: $verifyVcReq)
             }`,
             variables: `{

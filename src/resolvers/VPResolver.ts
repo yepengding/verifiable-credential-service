@@ -3,6 +3,8 @@ import {Arg, Mutation, Query, Resolver} from 'type-graphql';
 import {VCService} from "../services/VCService";
 import {CreateVPByVCDocStringReq, VerifyVPDocStringReq, VPDoc} from "../models/dtos/VP.dto";
 import {VPService} from "../services/VPService";
+import {Assert} from "../common/assertion/Assert";
+import {HttpErrorCode} from "../common/error-handling/ErroCode";
 
 /**
  * VP Resolver
@@ -48,6 +50,7 @@ export class VPResolver {
     })
     async verifyVPDocStringOffline(@Arg('verifyVPReq') verifyVPReq: VerifyVPDocStringReq): Promise<boolean> {
         const vpDoc = this.vpService.resolveDocStringToDoc(verifyVPReq.vpDocString);
+        Assert.isTrue(vpDoc.verifiableCredential.length > 0, HttpErrorCode.BAD_REQUEST, "Verifiable credentials should not be empty.");
 
         return await this.vpService.verifyVPDoc(vpDoc, verifyVPReq.publicKey);
     }

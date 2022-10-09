@@ -17,7 +17,7 @@ Proof value = Sign(Hash(Doc \ Proof))
 - [x] Issue VCs/VPs.
 - [x] VC persistence.
 - [x] Verify VCs/VPs offline.
-- [ ] Verify VCs/VPs based online (with VDR and VC persistence).
+- [x] Verify VCs/VPs online (with VDR and VC persistence).
 - [x] VC resolving by REST and GraphQL
 - [x] Administration.
 

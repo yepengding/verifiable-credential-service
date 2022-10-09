@@ -4,7 +4,7 @@
  * @author Yepeng Ding
  */
 
-import {IsArray, IsNotEmpty, MaxLength} from "class-validator";
+import {ArrayMinSize, IsArray, IsNotEmpty, MaxLength} from "class-validator";
 import {Field, InputType, ObjectType} from "type-graphql";
 import {Proof} from "./Common.dto";
 import {VCDoc} from "./VC.dto";
@@ -32,6 +32,7 @@ export class CreateVPByVCDocStringReq {
 
     @Field(() => [String], {description: "Verifiable credentials."})
     @IsArray()
+    @ArrayMinSize(1, {message: "Verifiable credentials should not be empty."})
     public vcDocString: string[];
 
 }

@@ -1,3 +1,8 @@
+/**
+ * VP-Related Test Cases
+ *
+ * @author Yepeng Ding
+ */
 import http from "http";
 import request from "supertest";
 import process from "process";
@@ -65,8 +70,6 @@ describe('VP GraphQL tests', () => {
                   }
                 }`
         };
-
-        console.log(mutationData.variables)
 
         await request(`${serverAddress}/graphql`)
             .post("/")

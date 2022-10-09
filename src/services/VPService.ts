@@ -4,8 +4,8 @@ import {ContextUtil} from "../util/ContextUtil";
 import {VPDoc} from "../models/dtos/VP.dto";
 import * as jose from 'jose';
 import {JWK} from 'jose';
-import {env} from "../common/env";
 import crypto from "crypto";
+import {urlOfVerificationMethod} from "../util/URLUtil";
 
 /**
  * Verifiable Presentation Service
@@ -40,7 +40,7 @@ export class VPService {
         vpDoc.proof = {
             type: "Ed25519Signature2020",
             created: proofDate.toISOString(),
-            verificationMethod: `${env.vdr.endpoint}/key/${holder}/${kid}`,
+            verificationMethod: urlOfVerificationMethod(holder, kid),
             proofPurpose: "assertionMethod",
             proofValue: proofValue
         };

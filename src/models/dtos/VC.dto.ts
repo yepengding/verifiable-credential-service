@@ -42,10 +42,23 @@ export class CreateVCReq {
 }
 
 /**
- * Verify VC Document String Request
+ * Verify VC Document String Online Request
  */
-@InputType({description: "Verify VC request."})
-export class VerifyVCDocStringReq {
+@InputType({description: "Verify VC document string online request."})
+export class VerifyVCDocStrOnReq {
+
+    @Field({description: "Verifiable credential document string."})
+    @IsNotEmpty()
+    @MaxLength(16383)
+    public vcDocString: string;
+
+}
+
+/**
+ * Verify VC Document String Offline Request
+ */
+@InputType({description: "Verify VC document string offline request."})
+export class VerifyVCDocStrOffReq {
 
     @Field({description: "Public assertion key (JWK string)."})
     @IsNotEmpty()
