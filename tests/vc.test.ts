@@ -7,7 +7,7 @@ import http from "http";
 import request from "supertest";
 import process from "process";
 import {App} from "../src/app";
-import {AssertionKey} from "./data/KeyData.test";
+import {AssertionKey1} from "./data/KeyData.test";
 import {TestVC1String} from "./data/VCData.test";
 import {env} from "../src/common/env";
 
@@ -34,8 +34,8 @@ describe('VC GraphQL tests', () => {
             institute: "The University of Tokyo",
             program: "Ph.D."
         });
-        const kid = AssertionKey.kid;
-        const privateKey = AssertionKey.private;
+        const kid = AssertionKey1.kid;
+        const privateKey = AssertionKey1.private;
 
         const mutationData = {
             query:
@@ -103,7 +103,7 @@ describe('VC GraphQL tests', () => {
 
     it('should verify VC offline.', async () => {
         const vc = TestVC1String;
-        const publicKey = AssertionKey.public;
+        const publicKey = AssertionKey1.public;
 
         const queryData = {
             query: `

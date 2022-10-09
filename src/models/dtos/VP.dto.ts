@@ -38,10 +38,23 @@ export class CreateVPByVCDocStringReq {
 }
 
 /**
- * Verify VP Document String Request
+ * Verify VP Document String Online Request
  */
-@InputType({description: "Verify VP document string request."})
-export class VerifyVPDocStringReq {
+@InputType({description: "Verify VP document string online request."})
+export class VerifyVPDocStrOnReq {
+
+    @Field({description: "Verifiable presentation document string."})
+    @IsNotEmpty()
+    @MaxLength(16383)
+    public vpDocString: string;
+
+}
+
+/**
+ * Verify VP Document String Offline Request
+ */
+@InputType({description: "Verify VP document string offline request."})
+export class VerifyVPDocStrOffReq {
 
     @Field({description: "Public assertion key (JWK)."})
     @IsNotEmpty()
