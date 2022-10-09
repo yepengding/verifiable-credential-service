@@ -7,6 +7,7 @@ import {CreateVCReq, VCDoc, VerifyVCDocStrOffReq, VerifyVCDocStrOnReq} from "../
 import {getReq} from "../util/HttpRequestUtil";
 import {PublicKey} from "../models/models/PublicKey";
 import {HttpErrorCode} from "../common/error-handling/ErroCode";
+import {didOfVMUrl} from "../util/URLUtil";
 
 /**
  * VC Resolver
@@ -60,7 +61,7 @@ export class VCResolver {
     }
 
     /**
-     * Verify VC Document String Online Request
+     * Verify VC Document String Online
      *
      * @param verifyVCReq
      */
@@ -70,8 +71,13 @@ export class VCResolver {
     async verifyVCDocStringOnline(@Arg('verifyVCReq') verifyVCReq: VerifyVCDocStrOnReq): Promise<boolean> {
         const vcDoc = this.vcService.resolveDocStringToDoc(verifyVCReq.vcDocString);
 
+        // Verify VC
         const vm = vcDoc.proof?.verificationMethod;
-        Assert.notNull(vm, HttpErrorCode.BAD_REQUEST, "Verification method should not be empty.");
+        Assert.notNull(vm,
+            HttpErrorCode.BAD_REQUEST, "Verification method should not be empty.");
+
+        Assert.isTrue(vcDoc.issuer === didOfVMUrl(vm as string),
+            HttpErrorCode.UNAUTHORIZED, "The verification method does not match the issuer.");
 
         const publicKey = await getReq<PublicKey>(vm as string);
 
@@ -79,7 +85,7 @@ export class VCResolver {
     }
 
     /**
-     * Verify VC Document String Offline Request
+     * Verify VC Document String Offline
      * without checking VDR and persistence.
      *
      * @param verifyVCReq
@@ -89,6 +95,14 @@ export class VCResolver {
     })
     async verifyVCDocStringOffline(@Arg('verifyVCReq') verifyVCReq: VerifyVCDocStrOffReq): Promise<boolean> {
         const vcDoc = this.vcService.resolveDocStringToDoc(verifyVCReq.vcDocString);
+
+        // Verify VC
+        const vm = vcDoc.proof?.verificationMethod;
+        Assert.notNull(vm,
+            HttpErrorCode.BAD_REQUEST, "Verification method should not be empty.");
+
+        Assert.isTrue(vcDoc.issuer === didOfVMUrl(vm as string),
+            HttpErrorCode.UNAUTHORIZED, "The verification method does not match the issuer.");
 
         return await this.vcService.verifyVCDoc(vcDoc, verifyVCReq.publicKey);
     }

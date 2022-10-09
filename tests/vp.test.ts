@@ -71,11 +71,32 @@ describe('VP GraphQL tests', () => {
                 }`
         };
 
-        console.log(mutationData.variables)
-
         await request(`${serverAddress}/graphql`)
             .post("/")
             .send(mutationData)
+            .expect('Content-Type', /json/)
+            .expect(200)
+            .then(res => console.log(res.body));
+    });
+
+    it('should verify VP online.', async () => {
+        const vp = TestVP1String;
+
+        const queryData = {
+            query: `
+                    query Query($verifyVpReq: VerifyVPDocStrOnReq!) {
+                      verifyVPDocStringOnline(verifyVPReq: $verifyVpReq)
+                    }`,
+            variables: `{
+                          "verifyVpReq": {
+                            "vpDocString": ${JSON.stringify(vp)}
+                          }
+                        }`,
+        }
+
+        await request(`${serverAddress}/graphql`)
+            .post("/")
+            .send(queryData)
             .expect('Content-Type', /json/)
             .expect(200)
             .then(res => console.log(res.body));

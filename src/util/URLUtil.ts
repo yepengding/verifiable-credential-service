@@ -25,3 +25,14 @@ export const urlOfVerificationMethod = (did: string, kid: string): string => {
 export const urlOfVC = (id: number): string => {
     return `${env.app.endpoint}/vc/${id}`;
 }
+
+/**
+ * Get DID from a given verification method URL
+ *
+ * @param url verification method URL
+ */
+export const didOfVMUrl = (url: string): string => {
+    const p = new RegExp(`${env.vdr.endpoint}/key/(.*)/(.*)`);
+    const matched = url.match(p);
+    return matched ? matched[1] : "";
+}

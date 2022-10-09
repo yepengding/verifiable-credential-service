@@ -67,8 +67,9 @@ export class VCService {
         // Get proof value
         const proofValue = vcDoc.proof?.proofValue as string;
 
-        // Delete vpService
-        delete vcDoc.proof;
+        // Delete proof
+        const vcDocWithoutProof = structuredClone(vcDoc);
+        delete vcDocWithoutProof.proof;
 
         // Parse proof value
         const {payload} = await jose.compactVerify(proofValue, pk);
@@ -77,7 +78,7 @@ export class VCService {
         const payloadStr = new TextDecoder().decode(payload);
 
         // Judge if hash values are equal
-        return this.getHashValue(vcDoc) === payloadStr;
+        return this.getHashValue(vcDocWithoutProof) === payloadStr;
     }
 
     /**

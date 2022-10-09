@@ -83,7 +83,8 @@ export class VPService {
         const proofValue = vpDoc.proof?.proofValue as string;
 
         // Delete proof
-        delete vpDoc.proof;
+        const vpDocWithoutProof = structuredClone(vpDoc);
+        delete vpDocWithoutProof.proof;
 
         // Parse proof value
         const {payload} = await jose.compactVerify(proofValue, pk);
@@ -92,7 +93,7 @@ export class VPService {
         const payloadStr = new TextDecoder().decode(payload);
 
         // Judge if hash values are equal
-        return this.getHashValue(vpDoc) === payloadStr;
+        return this.getHashValue(vpDocWithoutProof) === payloadStr;
     }
 
     /**
