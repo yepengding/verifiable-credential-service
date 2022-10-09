@@ -40,7 +40,7 @@ export class VPService {
         vpDoc.proof = {
             type: "Ed25519Signature2020",
             created: proofDate.toISOString(),
-            verificationMethod: `${env.vdr.endpoint}/did/${holder}#${kid}`,
+            verificationMethod: `${env.vdr.endpoint}/key/${holder}/${kid}`,
             proofPurpose: "assertionMethod",
             proofValue: proofValue
         };

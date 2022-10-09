@@ -27,7 +27,8 @@ export class VCResolver {
     @Mutation(() => VCDoc, {
         description: 'Create verifiable credential.',
     })
-    async createVC(@Arg('createVCReq') createVCReq: CreateVCReq): Promise<VCDoc> {
+    async createVC(@Arg('createVCReq', {description: "Verifiable credential object"}) createVCReq: CreateVCReq):
+        Promise<VCDoc> {
         // Instantiate VC
         let vc = new VC();
         vc.issuer = createVCReq.issuer;
@@ -57,12 +58,12 @@ export class VCResolver {
 
     /**
      * Verify VC Document String Request
-     * without checking issuance DB.
+     * without checking VDR and persistence.
      *
      * @param verifyVCReq
      */
     @Query(() => Boolean, {
-        description: 'Verify VC document string offline (without checking issuance DB).',
+        description: 'Verify VC document string offline (without checking VDR and persistence).',
     })
     async verifyVCDocStringOffline(@Arg('verifyVCReq') verifyVCReq: VerifyVCDocStringReq): Promise<boolean> {
         const vcDoc = this.vcService.resolveDocStringToDoc(verifyVCReq.vcDocString);
@@ -71,18 +72,18 @@ export class VCResolver {
     }
 
     @Query(() => VCDoc, {
-        description: 'Get VC document by id',
+        description: 'Get VC ID document by id',
     })
-    async getVCDoc(@Arg('id') id: number): Promise<VCDoc> {
+    async resolveVCToDoc(@Arg('id', {description: "Verifiable credential identifier"}) id: number): Promise<VCDoc> {
         const vc = await this.vcService.retrieve(id);
         Assert.notNull(vc, `VC (${id}) does not exist.`);
         return this.vcService.resolveVCToDoc(<VC>vc);
     }
 
     @Query(() => String, {
-        description: 'Resolve VC to VC document string by id',
+        description: 'Resolve VC ID to VC document string by id',
     })
-    async getVCDocString(@Arg('id') id: number): Promise<string> {
+    async resolveVCToDocString(@Arg('id', {description: "Verifiable credential identifier"}) id: number): Promise<string> {
         const vc = await this.vcService.retrieve(id);
         Assert.notNull(vc, `VC (${id}) does not exist.`);
         return JSON.stringify(this.vcService.resolveVCToDoc(<VC>vc));

@@ -27,7 +27,8 @@ export class VPResolver {
     @Mutation(() => VPDoc, {
         description: 'Create VP by VC document string.',
     })
-    async createVPByVCDocString(@Arg('createVPReq') createVPReq: CreateVPByVCDocStringReq): Promise<VPDoc> {
+    async createVPByVCDocString(@Arg('createVPReq', {description: "Verifiable presentation object."}) createVPReq: CreateVPByVCDocStringReq)
+        : Promise<VPDoc> {
         // Map VC document strings to VC documents
         const vcDocs = createVPReq.vcDocString
             .map(vcDocStr => this.vcService.resolveDocStringToDoc(vcDocStr));
@@ -36,8 +37,14 @@ export class VPResolver {
         return await this.vpService.composeVPDoc(vcDocs, createVPReq.holder, createVPReq.kid, createVPReq.privateKey);
     }
 
+    /**
+     * Verify VP Document String Offline
+     * without checking checking VDR and persistence
+     *
+     * @param verifyVPReq
+     */
     @Query(() => Boolean, {
-        description: 'Verify VP document string offline (without checking issuance DB).',
+        description: 'Verify VP document string offline (without checking checking VDR and persistence).',
     })
     async verifyVPDocStringOffline(@Arg('verifyVPReq') verifyVPReq: VerifyVPDocStringReq): Promise<boolean> {
         const vpDoc = this.vpService.resolveDocStringToDoc(verifyVPReq.vpDocString);

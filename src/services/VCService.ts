@@ -110,7 +110,7 @@ export class VCService {
             vcDoc.proof = {
                 type: "Ed25519Signature2020",
                 created: vc.proofCreatedAt?.toISOString(),
-                verificationMethod: `${env.vdr.endpoint}/did/${vc.issuer}#${vc.kid}`,
+                verificationMethod: `${env.vdr.endpoint}/key/${vc.issuer}/${vc.kid}`,
                 proofPurpose: "assertionMethod",
                 proofValue: vc.proofValue
             };

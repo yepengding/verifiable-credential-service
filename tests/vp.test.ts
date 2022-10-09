@@ -5,11 +5,12 @@ import {App} from "../src/app";
 import {AssertionKey} from "./data/KeyData.test";
 import {TestVC1String, TestVC2String} from "./data/VCData.test";
 import {TestVP1String} from "./data/VPData.test";
+import {env} from "../src/common/env";
 
 describe('VP GraphQL tests', () => {
 
     let server: http.Server;
-    const serverAddress = "http://localhost:9000";
+    const serverAddress = env.app.endpoint;
 
     before(() => {
         const app = new App();

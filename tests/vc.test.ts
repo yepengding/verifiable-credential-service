@@ -4,11 +4,12 @@ import process from "process";
 import {App} from "../src/app";
 import {AssertionKey} from "./data/KeyData.test";
 import {TestVC1String} from "./data/VCData.test";
+import {env} from "../src/common/env";
 
 describe('VC GraphQL tests', () => {
 
     let server: http.Server;
-    const serverAddress = "http://localhost:9000";
+    const serverAddress = env.app.endpoint;
 
     before(() => {
         const app = new App();
@@ -21,12 +22,12 @@ describe('VC GraphQL tests', () => {
     })
 
     it('should create VC offline.', async () => {
-        const issuer = "did:issuer:0002";
+        const issuer = "did:issuer:0001";
         const subject = "did:holder:0001";
         const claim = JSON.stringify({
             name: "Michael Ding",
-            institute: "ETH Zurich",
-            program: "Doctoral Exchange"
+            institute: "The University of Tokyo",
+            program: "Ph.D."
         });
         const kid = AssertionKey.kid;
         const privateKey = AssertionKey.private;

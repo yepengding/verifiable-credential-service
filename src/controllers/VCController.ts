@@ -25,21 +25,11 @@ export class VCController {
      * @param id
      */
     @Get('/:id')
-    async getOneById(@Param('id') id: number) {
+    async getById(@Param('id') id: number) {
         const vc = await this.vcService.retrieve(id);
         Assert.notNull(vc, `VC (id: ${id}) does not exist.`);
         return this.vcService.resolveVCToDoc(<VC>vc);
     }
-
-    /**
-     * Get all VCs.
-     *
-     */
-    @Get()
-    async getAll() {
-        return await this.vcService.findAll();
-    }
-
 
 }
 
