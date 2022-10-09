@@ -3,7 +3,11 @@ import {Arg, Mutation, Query, Resolver} from 'type-graphql';
 import {VCService} from "../services/VCService";
 import {VC} from "../models/entities/VC";
 import {Assert} from "../common/assertion/Assert";
-import {CreateVCReq, VCDoc, VerifyVCDocStringReq} from "../models/dtos/VC.dto";
+import {CreateVCReq, VCDoc, VerifyVCDocStrOffReq, VerifyVCDocStrOnReq} from "../models/dtos/VC.dto";
+import {getReq} from "../util/HttpRequestUtil";
+import {PublicKey} from "../models/models/PublicKey";
+import {HttpErrorCode} from "../common/error-handling/ErroCode";
+import {didOfVMUrl} from "../util/URLUtil";
 
 /**
  * VC Resolver
@@ -27,7 +31,8 @@ export class VCResolver {
     @Mutation(() => VCDoc, {
         description: 'Create verifiable credential.',
     })
-    async createVC(@Arg('createVCReq') createVCReq: CreateVCReq): Promise<VCDoc> {
+    async createVC(@Arg('createVCReq', {description: "Verifiable credential object"}) createVCReq: CreateVCReq):
+        Promise<VCDoc> {
         // Instantiate VC
         let vc = new VC();
         vc.issuer = createVCReq.issuer;
@@ -56,35 +61,67 @@ export class VCResolver {
     }
 
     /**
-     * Verify VC Document String Request
-     * without checking issuance DB.
+     * Verify VC Document String Online
      *
      * @param verifyVCReq
      */
     @Query(() => Boolean, {
-        description: 'Verify VC document string offline (without checking issuance DB).',
+        description: 'Verify VC document string online.',
     })
-    async verifyVCDocStringOffline(@Arg('verifyVCReq') verifyVCReq: VerifyVCDocStringReq): Promise<boolean> {
+    async verifyVCDocStringOnline(@Arg('verifyVCReq') verifyVCReq: VerifyVCDocStrOnReq): Promise<boolean> {
         const vcDoc = this.vcService.resolveDocStringToDoc(verifyVCReq.vcDocString);
+
+        // Verify VC
+        const vm = vcDoc.proof?.verificationMethod;
+        Assert.notNull(vm,
+            HttpErrorCode.BAD_REQUEST, "Verification method should not be empty.");
+
+        Assert.isTrue(vcDoc.issuer === didOfVMUrl(vm as string),
+            HttpErrorCode.UNAUTHORIZED, "The verification method does not match the issuer.");
+
+        const publicKey = await getReq<PublicKey>(vm as string);
+
+        return await this.vcService.verifyVCDoc(vcDoc, publicKey.jwk);
+    }
+
+    /**
+     * Verify VC Document String Offline
+     * without checking VDR and persistence.
+     *
+     * @param verifyVCReq
+     */
+    @Query(() => Boolean, {
+        description: 'Verify VC document string offline (without checking VDR and persistence).',
+    })
+    async verifyVCDocStringOffline(@Arg('verifyVCReq') verifyVCReq: VerifyVCDocStrOffReq): Promise<boolean> {
+        const vcDoc = this.vcService.resolveDocStringToDoc(verifyVCReq.vcDocString);
+
+        // Verify VC
+        const vm = vcDoc.proof?.verificationMethod;
+        Assert.notNull(vm,
+            HttpErrorCode.BAD_REQUEST, "Verification method should not be empty.");
+
+        Assert.isTrue(vcDoc.issuer === didOfVMUrl(vm as string),
+            HttpErrorCode.UNAUTHORIZED, "The verification method does not match the issuer.");
 
         return await this.vcService.verifyVCDoc(vcDoc, verifyVCReq.publicKey);
     }
 
     @Query(() => VCDoc, {
-        description: 'Get VC document by id',
+        description: 'Get VC ID document by id',
     })
-    async getVCDoc(@Arg('id') id: number): Promise<VCDoc> {
+    async resolveVCToDoc(@Arg('id', {description: "Verifiable credential identifier"}) id: number): Promise<VCDoc> {
         const vc = await this.vcService.retrieve(id);
-        Assert.notNull(vc, `VC (${id}) does not exist.`);
+        Assert.notNull(vc, HttpErrorCode.NOT_FOUND, `VC (${id}) does not exist.`);
         return this.vcService.resolveVCToDoc(<VC>vc);
     }
 
     @Query(() => String, {
-        description: 'Resolve VC to VC document string by id',
+        description: 'Resolve VC ID to VC document string by id',
     })
-    async getVCDocString(@Arg('id') id: number): Promise<string> {
+    async resolveVCToDocString(@Arg('id', {description: "Verifiable credential identifier"}) id: number): Promise<string> {
         const vc = await this.vcService.retrieve(id);
-        Assert.notNull(vc, `VC (${id}) does not exist.`);
+        Assert.notNull(vc, HttpErrorCode.NOT_FOUND, `VC (${id}) does not exist.`);
         return JSON.stringify(this.vcService.resolveVCToDoc(<VC>vc));
     }
 

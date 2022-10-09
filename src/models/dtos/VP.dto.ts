@@ -4,7 +4,7 @@
  * @author Yepeng Ding
  */
 
-import {IsArray, IsNotEmpty, MaxLength} from "class-validator";
+import {ArrayMinSize, IsArray, IsNotEmpty, MaxLength} from "class-validator";
 import {Field, InputType, ObjectType} from "type-graphql";
 import {Proof} from "./Common.dto";
 import {VCDoc} from "./VC.dto";
@@ -32,15 +32,29 @@ export class CreateVPByVCDocStringReq {
 
     @Field(() => [String], {description: "Verifiable credentials."})
     @IsArray()
+    @ArrayMinSize(1, {message: "Verifiable credentials should not be empty."})
     public vcDocString: string[];
 
 }
 
 /**
- * Verify VP Document String Request
+ * Verify VP Document String Online Request
  */
-@InputType({description: "Verify VP document string request."})
-export class VerifyVPDocStringReq {
+@InputType({description: "Verify VP document string online request."})
+export class VerifyVPDocStrOnReq {
+
+    @Field({description: "Verifiable presentation document string."})
+    @IsNotEmpty()
+    @MaxLength(16383)
+    public vpDocString: string;
+
+}
+
+/**
+ * Verify VP Document String Offline Request
+ */
+@InputType({description: "Verify VP document string offline request."})
+export class VerifyVPDocStrOffReq {
 
     @Field({description: "Public assertion key (JWK)."})
     @IsNotEmpty()

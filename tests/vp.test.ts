@@ -1,15 +1,21 @@
+/**
+ * VP-Related Test Cases
+ *
+ * @author Yepeng Ding
+ */
 import http from "http";
 import request from "supertest";
 import process from "process";
 import {App} from "../src/app";
-import {AssertionKey} from "./data/KeyData.test";
+import {AssertionKey3} from "./data/KeyData.test";
 import {TestVC1String, TestVC2String} from "./data/VCData.test";
 import {TestVP1String} from "./data/VPData.test";
+import {env} from "../src/common/env";
 
 describe('VP GraphQL tests', () => {
 
     let server: http.Server;
-    const serverAddress = "http://localhost:9000";
+    const serverAddress = env.app.endpoint;
 
     before(() => {
         const app = new App();
@@ -23,8 +29,8 @@ describe('VP GraphQL tests', () => {
 
     it('should compose VP offline.', async () => {
         const holder = "did:holder:0001";
-        const kid = AssertionKey.kid;
-        const privateKey = AssertionKey.private;
+        const kid = AssertionKey3.kid;
+        const privateKey = AssertionKey3.private;
         const vcDocString = [TestVC1String, TestVC2String];
 
         const mutationData = {
@@ -65,8 +71,6 @@ describe('VP GraphQL tests', () => {
                 }`
         };
 
-        console.log(mutationData.variables)
-
         await request(`${serverAddress}/graphql`)
             .post("/")
             .send(mutationData)
@@ -75,15 +79,38 @@ describe('VP GraphQL tests', () => {
             .then(res => console.log(res.body));
     });
 
-    it('should verify VP offline', async () => {
+    it('should verify VP online.', async () => {
         const vp = TestVP1String;
-        const publicKey = AssertionKey.public;
 
         const queryData = {
             query: `
-            query Query($verifyVpReq: VerifyVPDocStringReq!) {
-              verifyVPDocStringOffline(verifyVPReq: $verifyVpReq)
-            }`,
+                    query Query($verifyVpReq: VerifyVPDocStrOnReq!) {
+                      verifyVPDocStringOnline(verifyVPReq: $verifyVpReq)
+                    }`,
+            variables: `{
+                          "verifyVpReq": {
+                            "vpDocString": ${JSON.stringify(vp)}
+                          }
+                        }`,
+        }
+
+        await request(`${serverAddress}/graphql`)
+            .post("/")
+            .send(queryData)
+            .expect('Content-Type', /json/)
+            .expect(200)
+            .then(res => console.log(res.body));
+    });
+
+    it('should verify VP offline', async () => {
+        const vp = TestVP1String;
+        const publicKey = AssertionKey3.public;
+
+        const queryData = {
+            query: `
+                    query Query($verifyVpReq: VerifyVPDocStrOffReq!) {
+                      verifyVPDocStringOffline(verifyVPReq: $verifyVpReq)
+                    }`,
             variables: `{
                           "verifyVpReq": {
                             "publicKey": ${JSON.stringify(publicKey)},

@@ -1,6 +1,6 @@
 {
   "name": "verifiable-crendential-service",
-  "version": "0.0.9",
+  "version": "0.1.0",
   "description": "A lightweight service providing verifiable credential functionalities.",
   "main": "src/main.ts",
   "scripts": {
@@ -23,6 +23,7 @@
   "dependencies": {
     "apollo-server-core": "^3.10.2",
     "apollo-server-express": "^3.10.2",
+    "axios": "^1.1.2",
     "body-parser": "^1.20.0",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.13.2",

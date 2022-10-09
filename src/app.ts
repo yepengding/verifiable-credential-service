@@ -76,7 +76,7 @@ export class App {
 
         const spec = routingControllersToSpec(storage, {}, {
             components: {schemas},
-            info: {title: 'Verifiable Credential Service API', version: '0.0.9'},
+            info: {title: 'Verifiable Credential Service API', version: '0.1.0'},
         })
         this.app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(spec));
     }

@@ -3,10 +3,10 @@ import {getVCRepository} from "../repositories/VCRepository";
 import {VC} from "../models/entities/VC";
 import {VCDoc} from "../models/dtos/VC.dto";
 import {ContextUtil} from "../util/ContextUtil";
-import {env} from "../common/env";
 import * as jose from 'jose';
 import {JWK} from 'jose';
 import crypto from "crypto";
+import {urlOfVC, urlOfVerificationMethod} from "../util/URLUtil";
 
 /**
  * Verifiable Credential Service
@@ -67,8 +67,9 @@ export class VCService {
         // Get proof value
         const proofValue = vcDoc.proof?.proofValue as string;
 
-        // Delete vpService
-        delete vcDoc.proof;
+        // Delete proof
+        const vcDocWithoutProof = structuredClone(vcDoc);
+        delete vcDocWithoutProof.proof;
 
         // Parse proof value
         const {payload} = await jose.compactVerify(proofValue, pk);
@@ -77,7 +78,7 @@ export class VCService {
         const payloadStr = new TextDecoder().decode(payload);
 
         // Judge if hash values are equal
-        return this.getHashValue(vcDoc) === payloadStr;
+        return this.getHashValue(vcDocWithoutProof) === payloadStr;
     }
 
     /**
@@ -92,7 +93,7 @@ export class VCService {
         // Set default VC contexts
         vcDoc.context = ContextUtil.defaultContextOfVC();
 
-        vcDoc.id = `${env.app.endpoint}/vc/${vc.id}`;
+        vcDoc.id = urlOfVC(vc.id);
 
         // Set default VC type
         vcDoc.type = ["VerifiableCredential"];
@@ -110,7 +111,7 @@ export class VCService {
             vcDoc.proof = {
                 type: "Ed25519Signature2020",
                 created: vc.proofCreatedAt?.toISOString(),
-                verificationMethod: `${env.vdr.endpoint}/did/${vc.issuer}#${vc.kid}`,
+                verificationMethod: urlOfVerificationMethod(vc.issuer, vc.kid),
                 proofPurpose: "assertionMethod",
                 proofValue: vc.proofValue
             };

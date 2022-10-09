@@ -4,8 +4,8 @@ import {ContextUtil} from "../util/ContextUtil";
 import {VPDoc} from "../models/dtos/VP.dto";
 import * as jose from 'jose';
 import {JWK} from 'jose';
-import {env} from "../common/env";
 import crypto from "crypto";
+import {urlOfVerificationMethod} from "../util/URLUtil";
 
 /**
  * Verifiable Presentation Service
@@ -40,7 +40,7 @@ export class VPService {
         vpDoc.proof = {
             type: "Ed25519Signature2020",
             created: proofDate.toISOString(),
-            verificationMethod: `${env.vdr.endpoint}/did/${holder}#${kid}`,
+            verificationMethod: urlOfVerificationMethod(holder, kid),
             proofPurpose: "assertionMethod",
             proofValue: proofValue
         };
@@ -83,7 +83,8 @@ export class VPService {
         const proofValue = vpDoc.proof?.proofValue as string;
 
         // Delete proof
-        delete vpDoc.proof;
+        const vpDocWithoutProof = structuredClone(vpDoc);
+        delete vpDocWithoutProof.proof;
 
         // Parse proof value
         const {payload} = await jose.compactVerify(proofValue, pk);
@@ -92,7 +93,7 @@ export class VPService {
         const payloadStr = new TextDecoder().decode(payload);
 
         // Judge if hash values are equal
-        return this.getHashValue(vpDoc) === payloadStr;
+        return this.getHashValue(vpDocWithoutProof) === payloadStr;
     }
 
     /**
