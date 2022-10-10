@@ -6,7 +6,7 @@ import {VPService} from "../services/VPService";
 import {Assert} from "../common/assertion/Assert";
 import {HttpErrorCode} from "../common/error-handling/ErroCode";
 import {getReq} from "../util/HttpRequestUtil";
-import {PublicKey} from "../models/models/PublicKey";
+import {PublicKey} from "../models/dtos/res/PublicKey.dto";
 import {didOfVMUrl} from "../util/URLUtil";
 
 /**

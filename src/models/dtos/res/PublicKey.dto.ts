@@ -1,5 +1,5 @@
 /**
- * Public Key Model
+ * Public Key VO
  *
  * @author Yepeng Ding
  */
