@@ -5,7 +5,7 @@ import {VC} from "../models/entities/VC";
 import {Assert} from "../common/assertion/Assert";
 import {CreateVCReq, VCDoc, VerifyVCDocStrOffReq, VerifyVCDocStrOnReq} from "../models/dtos/VC.dto";
 import {getReq} from "../util/HttpRequestUtil";
-import {PublicKey} from "../models/models/PublicKey";
+import {PublicKey} from "../models/dtos/res/PublicKey.dto";
 import {HttpErrorCode} from "../common/error-handling/ErroCode";
 import {didOfVMUrl} from "../util/URLUtil";
 
