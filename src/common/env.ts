@@ -20,7 +20,7 @@ export const env = {
         endpoint: `${process.env.APP_DOMAIN || 'http://localhost'}:${process.env.APP_PORT || 9000}`
     },
     log: {
-        dir: process.env.LOG_DIR || 'log',
+        dir: process.env.LOG_DIR || 'logs',
         format: process.env.LOG_FORMAT || 'common'
     },
     db: {
